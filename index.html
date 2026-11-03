@@ -12,6 +12,7 @@
 <main class="wrap">
 <nav aria-label="Widoki"><button data-tab="catalog" class="active">Katalog</button><button data-tab="analyze">Analizuj skład</button><button data-tab="mine">Moje suplementy <span id="ownedCount">0</span></button></nav>
 <section id="catalog" class="view">
+<div class="catalog-subnav" role="group" aria-label="Rodzaj składników"><button type="button" data-catalog-group="active" class="active" aria-pressed="true">Substancje aktywne</button><button type="button" data-catalog-group="additives" aria-pressed="false">Dodatki i substancje pomocnicze</button></div>
 <div class="toolbar"><input id="search" placeholder="Szukaj: nazwa, alias, numer E, funkcja…" aria-label="Szukaj składników"><select id="category" aria-label="Kategoria"><option value="">Wszystkie kategorie</option></select></div>
 <p id="count" class="muted"></p><div id="items" class="cards"></div>
 </section>
