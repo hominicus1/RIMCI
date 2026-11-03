@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10231e">
+  <title>RIMCI — katalog składników</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+<header><div class="wrap"><h1>RIMCI <small>alpha</small></h1><p>Encyklopedia składników · analizator etykiet · moja suplementacja</p></div></header>
+<main class="wrap">
+<nav aria-label="Widoki"><button data-tab="catalog" class="active">Katalog</button><button data-tab="analyze">Analizuj skład</button><button data-tab="mine">Moje składniki <span id="ownedCount">0</span></button></nav>
+<section id="catalog" class="view">
+<div class="toolbar"><input id="search" placeholder="Szukaj: nazwa, alias, numer E, funkcja…" aria-label="Szukaj składników"><select id="category" aria-label="Kategoria"><option value="">Wszystkie kategorie</option></select></div>
+<p id="count" class="muted"></p><div id="items" class="cards"></div>
+</section>
+<section id="analyze" class="view hidden">
+<h2>Analizator etykiety</h2><p class="muted">Wklej skład rozdzielony przecinkami, średnikami lub nowymi liniami. Dopasowania są orientacyjne i nie zastępują weryfikacji etykiety.</p>
+<textarea id="composition" rows="6" placeholder="Np. celuloza mikrokrystaliczna, E551, stearynian magnezu, ashwagandha"></textarea>
+<button id="runAnalysis">Rozpoznaj składniki</button><div id="analysis" class="cards"></div>
+</section>
+<section id="mine" class="view hidden"><h2>Moje składniki</h2><p class="muted">Lista jest zapisywana wyłącznie w tej przeglądarce. Nie jest przesyłana na GitHub.</p><div id="owned" class="cards"></div><button id="export">Eksportuj listę JSON</button></section>
+</main><footer class="wrap">RIMCI alpha · Informacje edukacyjne, nie indywidualne zalecenia medyczne.</footer>
+<script src="data/ingredients.js"></script><script src="src/app.js"></script>
+</body></html>
