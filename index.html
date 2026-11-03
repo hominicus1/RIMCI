@@ -10,7 +10,7 @@
 <body>
 <header><div class="wrap"><h1>RIMCI <small>alpha</small></h1><p>Encyklopedia składników · analizator etykiet · moja suplementacja</p></div></header>
 <main class="wrap">
-<nav aria-label="Widoki"><button data-tab="catalog" class="active">Katalog</button><button data-tab="analyze">Analizuj skład</button><button data-tab="mine">Moje składniki <span id="ownedCount">0</span></button></nav>
+<nav aria-label="Widoki"><button data-tab="catalog" class="active">Katalog</button><button data-tab="analyze">Analizuj skład</button><button data-tab="mine">Moje suplementy <span id="ownedCount">0</span></button></nav>
 <section id="catalog" class="view">
 <div class="toolbar"><input id="search" placeholder="Szukaj: nazwa, alias, numer E, funkcja…" aria-label="Szukaj składników"><select id="category" aria-label="Kategoria"><option value="">Wszystkie kategorie</option></select></div>
 <p id="count" class="muted"></p><div id="items" class="cards"></div>
@@ -20,7 +20,7 @@
 <textarea id="composition" rows="6" placeholder="Np. celuloza mikrokrystaliczna, E551, stearynian magnezu, ashwagandha"></textarea>
 <button id="runAnalysis">Rozpoznaj składniki</button><div id="analysis" class="cards"></div>
 </section>
-<section id="mine" class="view hidden"><h2>Moje składniki</h2><p class="muted">Lista jest zapisywana wyłącznie w tej przeglądarce. Nie jest przesyłana na GitHub.</p><div id="owned" class="cards"></div><button id="export">Eksportuj listę JSON</button></section>
+<section id="mine" class="view hidden"><h2>Moje suplementy</h2><p class="muted">Dodawaj konkretne preparaty wraz z producentem i składem z etykiety. Dane pozostają w tej przeglądarce.</p><div id="supplementManager"></div></section>
 </main><footer class="wrap">RIMCI alpha · Informacje edukacyjne, nie indywidualne zalecenia medyczne.</footer>
 <script src="data/ingredients.js"></script><script src="data/excipients-extra.js"></script><script src="data/actives-extra.js"></script><script src="data/relationships.js"></script><script src="src/app.js"></script><script src="src/extensions.js"></script><script src="src/doses.js"></script>
 </body></html>
