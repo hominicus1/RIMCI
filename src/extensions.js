@@ -4,16 +4,15 @@
 const db=window.RIMCI_INGREDIENTS||[], details=window.RIMCI_ACTIVE_DETAILS||{};
 const normalize=s=>String(s).toLocaleLowerCase("pl").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const section=document.createElement("section");section.id="product-panel";section.className="view hidden";
-section.innerHTML='<h2>Baza produktów</h2><p class="muted">Wpisz dane z etykiety. Produkty zapisują się lokalnie w przeglądarce; nie trafiają na GitHuba.</p><label>Producent / nazwa <input id="prodName" placeholder="np. producent i nazwa produktu"></label><label>Skład z etykiety <textarea id="prodIngredients" rows="5" placeholder="Wpisz skład oraz deklarowane ilości"></textarea></label><button id="saveProduct">Zapisz produkt</button><div id="productList" class="cards"></div>';
-document.querySelector("main").append(section);
-const nav=document.querySelector("nav"), b=document.createElement("button");b.textContent="Produkty";b.dataset.tab="product-panel";nav.append(b);
-b.addEventListener("click",()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("hidden",v!==section));renderProducts()});
+const section=document.getElementById("supplementManager");
+section.innerHTML='<h3>Dodaj suplement</h3><p class="muted">Podaj konkretny produkt i jego producenta. Skład wpisuj dokładnie z etykiety.</p><label>Producent / nazwa <input id="prodName" placeholder="np. Swanson — Magnesium Citrate"></label><label>Skład z etykiety <textarea id="prodIngredients" rows="5" placeholder="Skład i ilości deklarowane na opakowaniu"></textarea></label><button id="saveProduct">Dodaj do moich suplementów</button><div id="productList" class="cards"></div><button id="exportSupplements">Eksportuj suplementy JSON</button>';
 let products=[];try{products=JSON.parse(localStorage.getItem("rimci-products-v1")||"[]")}catch{}
-const save=()=>localStorage.setItem("rimci-products-v1",JSON.stringify(products));
-function renderProducts(){document.getElementById("productList").innerHTML=products.map((p,i)=>'<article class="card"><h3>'+escape(p.name)+'</h3><p>'+escape(p.ingredients)+'</p><button data-remove-product="'+i+'">Usuń</button></article>').join("")||"<p>Brak produktów.</p>"}
+const save=()=>{localStorage.setItem("rimci-products-v1",JSON.stringify(products));document.getElementById("ownedCount").textContent=products.length};
+function renderProducts(){document.getElementById("ownedCount").textContent=products.length;document.getElementById("productList").innerHTML=products.map((p,i)=>'<article class="card"><h3>'+escape(p.name)+'</h3><p>'+escape(p.ingredients)+'</p><button data-remove-product="'+i+'">Usuń</button></article>').join("")||"<p>Brak produktów.</p>"}
 document.getElementById("saveProduct").addEventListener("click",()=>{const name=document.getElementById("prodName").value.trim(),ingredients=document.getElementById("prodIngredients").value.trim();if(!name||!ingredients)return alert("Podaj nazwę i skład.");products.push({name,ingredients,createdAt:new Date().toISOString()});save();renderProducts();document.getElementById("prodName").value="";document.getElementById("prodIngredients").value=""});
 document.addEventListener("click",e=>{const target=e.target.closest("[data-remove-product]");if(!target)return;products.splice(Number(target.dataset.removeProduct),1);save();renderProducts()});
+document.getElementById("exportSupplements").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="rimci-moje-suplementy.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
+renderProducts();
 const info=document.createElement("dialog");info.style.cssText="background:#14221d;color:#e7f4ed;border:1px solid #416253;border-radius:16px;max-width:min(92vw,680px);max-height:85vh;overflow:auto;padding:24px";document.body.append(info);
 const oldCards=()=>document.querySelectorAll(".card");
 const addDetailButtons=()=>{oldCards().forEach(card=>{if(card.querySelector("[data-details]"))return;const h=card.querySelector("h3");if(!h)return;const x=db.find(x=>x.name===h.textContent);if(!x)return;const btn=document.createElement("button");btn.textContent="Karta i powiązania";btn.dataset.details=x.id;card.append(btn)})};
