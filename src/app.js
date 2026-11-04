@@ -4,7 +4,10 @@ const db=window.RIMCI_INGREDIENTS||[];
 const $=id=>document.getElementById(id);
 const normalize=s=>String(s).toLocaleLowerCase("pl").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const additiveCategories=new Set(["Wypełniacze","Technologiczne","Kapsułki","Emulgatory","Regulatory","Konserwanty","Słodziki","Barwniki","Aromaty"]);\nlet catalogGroup="active";\nconst inGroup=x=>catalogGroup==="additives"?additiveCategories.has(x.category):!additiveCategories.has(x.category);\nconst flags={standard:"Dodatek technologiczny",context:"Sprawdź kontekst",preference:"Preferencja: unikać",regulatory:"Ograniczenie regulacyjne"};
+const additiveCategories=new Set(["Wypełniacze","Technologiczne","Kapsułki","Emulgatory","Regulatory","Konserwanty","Słodziki","Barwniki","Aromaty"]);
+let catalogGroup="active";
+const inGroup=x=>catalogGroup==="additives"?additiveCategories.has(x.category):!additiveCategories.has(x.category);
+const flags={standard:"Dodatek technologiczny",context:"Sprawdź kontekst",preference:"Preferencja: unikać",regulatory:"Ograniczenie regulacyjne"};
 function card(x){return '<article class="card"><h3>'+esc(x.name)+'</h3><span class="pill '+(x.flag==="preference"||x.flag==="regulatory"?"preference":x.flag==="context"?"caution":"")+'">'+esc(flags[x.flag])+'</span><p>'+esc(x.role)+'</p><p class="muted">'+esc(x.aliases.join(" · "))+'</p><div class="actions"><small>'+esc(x.category)+'</small></div></article>'}
 function render(){
 const q=normalize($("search").value),cat=$("category").value;
@@ -13,12 +16,13 @@ $("count").textContent=found.length+" z "+db.filter(inGroup).length+" w tej czę
 $("items").innerHTML=found.map(card).join("")||"<p>Brak wyników.</p>";
 }
 document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("hidden",v.id!==b.dataset.tab));render()}));
-function updateCategories(){const select=$("category"),previous=select.value;select.replaceChildren();const all=document.createElement("option");all.value="";all.textContent="Wszystkie kategorie";select.append(all);for(const cat of [...new Set(db.filter(inGroup).map(x=>x.category))].sort()){const o=document.createElement("option");o.value=cat;o.textContent=cat;select.append(o)}select.value=[...select.options].some(o=>o.value===previous)?previous:""}\ndocument.querySelectorAll("[data-catalog-group]").forEach(b=>b.addEventListener("click",()=>{catalogGroup=b.dataset.catalogGroup;document.querySelectorAll("[data-catalog-group]").forEach(x=>{const active=x===b;x.classList.toggle("active",active);x.setAttribute("aria-pressed",String(active))});updateCategories();render()}));\nupdateCategories();
+function updateCategories(){const select=$("category"),previous=select.value;select.replaceChildren();const all=document.createElement("option");all.value="";all.textContent="Wszystkie kategorie";select.append(all);for(const cat of [...new Set(db.filter(inGroup).map(x=>x.category))].sort()){const o=document.createElement("option");o.value=cat;o.textContent=cat;select.append(o)}select.value=[...select.options].some(o=>o.value===previous)?previous:""}\ndocument.querySelectorAll("[data-catalog-group]").forEach(b=>b.addEventListener("click",()=>{catalogGroup=b.dataset.catalogGroup;document.querySelectorAll("[data-catalog-group]").forEach(x=>{const active=x===b;x.classList.toggle("active",active);x.setAttribute("aria-pressed",String(active))});updateCategories();render()}));
+updateCategories();
 $("search").addEventListener("input",render);$("category").addEventListener("change",render);
 $("runAnalysis").addEventListener("click",()=>{
-const parts=$("composition").value.split(/[,;\\n]+/).map(s=>s.trim()).filter(Boolean);
-const strip=s=>normalize(s).replace(/\\s*\\([^)]*\\)\\s*/g," ").replace(/\\s+/g," ").trim();
-const candidates=part=>{const raw=strip(part);const withoutDose=raw.replace(/\\s+\\d+(?:[.,]\\d+)?\\s*(?:mg|mcg|µg|ug|g|iu|j\\.?m\\.?)\\b.*$/i,"").trim();return [raw,withoutDose].filter(Boolean)};
+const parts=$("composition").value.split(/[,;\n]+/).map(s=>s.trim()).filter(Boolean);
+const strip=s=>normalize(s).replace(/\s*\([^)]*\)\s*/g," ").replace(/\s+/g," ").trim();
+const candidates=part=>{const raw=strip(part);const withoutDose=raw.replace(/\s+\d+(?:[.,]\d+)?\s*(?:mg|mcg|µg|ug|g|iu|j\.?m\.?)\b.*$/i,"").trim();return [raw,withoutDose].filter(Boolean)};
 $("analysis").innerHTML=parts.map(part=>{const keys=candidates(part);const x=db.find(i=>[i.name,...i.aliases].some(a=>keys.includes(strip(a))));return '<article class="card"><h3>'+esc(part)+'</h3><p>'+(x?'✓ '+esc(x.name)+' — '+esc(x.role):'Nie rozpoznano jednoznacznie. Sprawdź nazwę, ilość i etykietę.')+'</p></article>'}).join("")||"<p>Wklej skład.</p>";
 });
 render();
